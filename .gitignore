@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Backend runtime data (ingested repos + SQLite database)
+backend/data/
+
+# Node / frontend build
+node_modules/
+frontend/dist/
+
+# OS / editor
+.DS_Store
+*.log
