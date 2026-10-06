@@ -69,6 +69,9 @@ Authorship (`a` after merging): `I(a,h) = 1 ⇔ a = h[a]`,
 Prerequisites: Python 3.10+, Node 18+, git ≥ 2.30.
 
 ```bash
+./start.sh            # one-shot: install + build + serve everything on :8000
+
+# or, step by step:
 make install          # python venv + backend deps, npm install for the frontend
 make dev              # API on :8000 + Vite dev server on :5173 (open :5173)
 # or single-port production mode:
