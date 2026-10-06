@@ -9,4 +9,6 @@ scope:
     - backend/app/schemas.py
 source_files: []
 depends_on: []
-related_to: []
+related_to:
+    - path: backend/tests
+    - path: frontend/shared_lib_and_state

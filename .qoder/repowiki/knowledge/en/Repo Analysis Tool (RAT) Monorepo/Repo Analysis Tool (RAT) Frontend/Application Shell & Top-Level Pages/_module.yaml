@@ -7,5 +7,4 @@ scope:
     - frontend/src/main.tsx
 source_files: []
 depends_on: []
-related_to:
-    - path: frontend/shared_lib_and_state
+related_to: []

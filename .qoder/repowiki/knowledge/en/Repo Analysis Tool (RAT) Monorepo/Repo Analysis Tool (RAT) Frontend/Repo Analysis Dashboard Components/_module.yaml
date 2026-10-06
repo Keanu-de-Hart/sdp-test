@@ -1,9 +1,8 @@
 schema_version: 1
 module_path: frontend/components
-title: Repository Analysis Dashboard Components
+title: Repo Analysis Dashboard Components
 scope:
     - frontend/src/components/
 source_files: []
 depends_on: []
-related_to:
-    - path: frontend/shared_lib_and_state
+related_to: []

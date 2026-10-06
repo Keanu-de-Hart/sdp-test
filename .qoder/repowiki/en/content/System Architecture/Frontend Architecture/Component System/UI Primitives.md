@@ -12,7 +12,17 @@
 - [AuthorsPage.tsx](file://frontend/src/pages/AuthorsPage.tsx)
 - [DashboardPage.tsx](file://frontend/src/pages/DashboardPage.tsx)
 - [ReposPage.tsx](file://frontend/src/pages/ReposPage.tsx)
+- [DirectoryTreemap.tsx](file://frontend/src/components/DirectoryTreemap.tsx)
+- [AuthorPanel.tsx](file://frontend/src/components/AuthorPanel.tsx)
+- [GrowthTimeline.tsx](file://frontend/src/components/GrowthTimeline.tsx)
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Updated ChartState component documentation to reflect new customizable empty message support
+- Enhanced overlay styling documentation with specific CSS class references
+- Added usage examples showing conditional empty message implementation
+- Updated component behavior descriptions to include overlay positioning and chart mounting strategy
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -33,6 +43,7 @@ The primitives emphasize:
 - Clear user feedback with loading, error, and empty states
 - Lightweight composition patterns that keep pages and feature components simple
 - Accessibility-friendly semantics such as titles and semantic containers
+- Efficient chart rendering with persistent component mounting
 
 ## Project Structure
 The UI primitives live under `frontend/src/components/ui.tsx` and are consumed by feature components and pages throughout the frontend. Their appearance is controlled by global styles in `frontend/src/theme.css`.
@@ -48,6 +59,9 @@ R["RepoGate.tsx"]
 C["CommitSetTable.tsx"]
 F["FileMetricsTable.tsx"]
 S["SummaryCards.tsx"]
+DT["DirectoryTreemap.tsx"]
+AP["AuthorPanel.tsx"]
+GT["GrowthTimeline.tsx"]
 end
 subgraph "Pages"
 A["AuthorsPage.tsx"]
@@ -60,6 +74,9 @@ U --> R
 U --> C
 U --> F
 U --> S
+U --> DT
+U --> AP
+U --> GT
 U --> A
 U --> D
 U --> P
@@ -69,14 +86,9 @@ T -.-> U
 **Diagram sources**
 - [ui.tsx:1-65](file://frontend/src/components/ui.tsx#L1-L65)
 - [theme.css:1-326](file://frontend/src/theme.css#L1-L326)
-- [NavBar.tsx:1-20](file://frontend/src/components/NavBar.tsx#L1-L20)
-- [RepoGate.tsx:1-20](file://frontend/src/components/RepoGate.tsx#L1-L20)
-- [CommitSetTable.tsx:1-20](file://frontend/src/components/CommitSetTable.tsx#L1-L20)
-- [FileMetricsTable.tsx:1-20](file://frontend/src/components/FileMetricsTable.tsx#L1-L20)
-- [SummaryCards.tsx:1-20](file://frontend/src/components/SummaryCards.tsx#L1-L20)
-- [AuthorsPage.tsx:1-20](file://frontend/src/pages/AuthorsPage.tsx#L1-L20)
-- [DashboardPage.tsx:1-20](file://frontend/src/pages/DashboardPage.tsx#L1-L20)
-- [ReposPage.tsx:1-20](file://frontend/src/pages/ReposPage.tsx#L1-L20)
+- [DirectoryTreemap.tsx:170-198](file://frontend/src/components/DirectoryTreemap.tsx#L170-L198)
+- [AuthorPanel.tsx:190-199](file://frontend/src/components/AuthorPanel.tsx#L190-L199)
+- [GrowthTimeline.tsx:166-174](file://frontend/src/components/GrowthTimeline.tsx#L166-L174)
 
 **Section sources**
 - [ui.tsx:1-65](file://frontend/src/components/ui.tsx#L1-L65)
@@ -176,7 +188,7 @@ Customization:
 
 ### Empty
 Purpose:
-- Provides a centered placeholder for “no data” scenarios.
+- Provides a centered placeholder for "no data" scenarios.
 
 Props:
 - children: Optional. Any content to display inside the empty state container.
@@ -261,12 +273,13 @@ Customization:
 Purpose:
 - Manages overlay states for chart components: loading, error, and empty.
 - Ensures the underlying chart remains mounted to avoid expensive re-initialization.
+- Supports customizable empty messages for contextual user guidance.
 
 Props:
 - loading: Boolean indicating whether data is being fetched.
 - error: String error message or null.
 - empty: Boolean indicating whether data exists but is empty.
-- emptyMessage: Optional override for the default empty message.
+- emptyMessage: Optional override for the default empty message. Falls back to "No data for the current selection." if not provided.
 - children: The chart component itself, always rendered underneath overlays.
 
 Behavior:
@@ -274,22 +287,49 @@ Behavior:
 - If loading and empty, a loading overlay is shown.
 - If only empty, an empty overlay is shown with a default or custom message.
 - Otherwise, the chart renders normally without overlays.
+- Children remain mounted beneath overlays to prevent costly chart re-initialization.
+
+Styling:
+- Uses `.chart-state` as the container with relative positioning.
+- Overlays use `.chart-overlay` with absolute positioning, semi-transparent background, and centered content.
+- Overlay includes padding and rounded corners matching the application's design system.
 
 Accessibility:
 - Overlays communicate state clearly; ensure chart components themselves expose appropriate roles and labels.
+- Empty messages should be descriptive and helpful for screen reader users.
 
 Usage examples:
 - Wraps ECharts-based charts to handle lifecycle states consistently.
+- Supports contextual empty messages based on application state.
 
 Customization:
 - Adjust overlay background opacity, padding, or z-index by modifying `.chart-state` and `.chart-overlay` styles.
+- Customize empty message text through the `emptyMessage` prop for contextual guidance.
+
+Updated Usage Examples:
+```tsx
+// Basic usage with default empty message
+<ChartState loading={loading} error={error} empty={!loading && items.length === 0}>
+  <div ref={chartRef} className="chart" />
+</ChartState>
+
+// Custom empty message for contextual guidance
+<ChartState 
+  loading={loading} 
+  error={error} 
+  empty={!loading && (isTreemap ? children.length === 0 : items.length === 0)}
+  emptyMessage={filters.path ? "This directory has no subdirectories." : "No data for the current selection."}
+>
+  {isTreemap ? <div ref={elRef} className="chart tall" /> : <DirectoryTree items={items} />}
+</ChartState>
+```
 
 **Section sources**
 - [ui.tsx:36-64](file://frontend/src/components/ui.tsx#L36-L64)
 - [theme.css:247-252](file://frontend/src/theme.css#L247-L252)
-- [AuthorPanel.tsx:1-20](file://frontend/src/components/AuthorPanel.tsx#L1-L20)
-- [DirectoryTreemap.tsx:1-20](file://frontend/src/components/DirectoryTreemap.tsx#L1-L20)
-- [GrowthTimeline.tsx:1-20](file://frontend/src/components/GrowthTimeline.tsx#L1-L20)
+- [DirectoryTreemap.tsx:172-192](file://frontend/src/components/DirectoryTreemap.tsx#L172-L192)
+- [AuthorPanel.tsx:191-194](file://frontend/src/components/AuthorPanel.tsx#L191-L194)
+- [GrowthTimeline.tsx:167-169](file://frontend/src/components/GrowthTimeline.tsx#L167-L169)
 
 ## Dependency Analysis
 The primitives have minimal internal dependencies and rely on shared CSS classes and theme variables. Consumers import them directly where needed.
@@ -301,21 +341,19 @@ U --> RG["RepoGate.tsx"]
 U --> CST["CommitSetTable.tsx"]
 U --> FMT["FileMetricsTable.tsx"]
 U --> SC["SummaryCards.tsx"]
-U --> AP["AuthorsPage.tsx"]
+U --> DT["DirectoryTreemap.tsx"]
+U --> AP["AuthorPanel.tsx"]
+U --> GT["GrowthTimeline.tsx"]
+U --> APG["AuthorsPage.tsx"]
 U --> DP["DashboardPage.tsx"]
 U --> RP["ReposPage.tsx"]
 ```
 
 **Diagram sources**
 - [ui.tsx:1-65](file://frontend/src/components/ui.tsx#L1-L65)
-- [NavBar.tsx:1-20](file://frontend/src/components/NavBar.tsx#L1-L20)
-- [RepoGate.tsx:1-20](file://frontend/src/components/RepoGate.tsx#L1-L20)
-- [CommitSetTable.tsx:1-20](file://frontend/src/components/CommitSetTable.tsx#L1-L20)
-- [FileMetricsTable.tsx:1-20](file://frontend/src/components/FileMetricsTable.tsx#L1-L20)
-- [SummaryCards.tsx:1-20](file://frontend/src/components/SummaryCards.tsx#L1-L20)
-- [AuthorsPage.tsx:1-20](file://frontend/src/pages/AuthorsPage.tsx#L1-L20)
-- [DashboardPage.tsx:1-20](file://frontend/src/pages/DashboardPage.tsx#L1-L20)
-- [ReposPage.tsx:1-20](file://frontend/src/pages/ReposPage.tsx#L1-L20)
+- [DirectoryTreemap.tsx:172-192](file://frontend/src/components/DirectoryTreemap.tsx#L172-L192)
+- [AuthorPanel.tsx:191-194](file://frontend/src/components/AuthorPanel.tsx#L191-L194)
+- [GrowthTimeline.tsx:167-169](file://frontend/src/components/GrowthTimeline.tsx#L167-L169)
 
 **Section sources**
 - [ui.tsx:1-65](file://frontend/src/components/ui.tsx#L1-L65)
@@ -324,6 +362,7 @@ U --> RP["ReposPage.tsx"]
 - ChartState keeps the chart component mounted beneath overlays to avoid costly re-initialization when toggling states.
 - Progress uses a simple inline width style for smooth transitions without heavy computations.
 - Primitives are lightweight and avoid unnecessary re-renders by keeping props minimal and stateless where possible.
+- The overlay system uses CSS transforms and opacity for optimal performance during state transitions.
 
 [No sources needed since this section provides general guidance]
 
@@ -333,6 +372,8 @@ Common issues and resolutions:
 - Empty or error overlays not appearing: Verify that the correct combination of `loading`, `error`, and `empty` props is passed to ChartState.
 - Spinner not visible: Confirm that the `.spinner` class is present and that animations are not blocked by CSS overrides.
 - Badge colors mismatched: Check that the status value matches expected variants and that theme variables for positive, negative, and warning are correctly set.
+- Custom empty message not displaying: Ensure the `emptyMessage` prop is properly passed and that the empty state condition evaluates to true.
+- Chart re-initialization issues: Verify that ChartState is wrapping the chart component and that the chart ref is properly managed.
 
 **Section sources**
 - [ui.tsx:11-18](file://frontend/src/components/ui.tsx#L11-L18)
@@ -341,6 +382,6 @@ Common issues and resolutions:
 - [theme.css:247-252](file://frontend/src/theme.css#L247-L252)
 
 ## Conclusion
-The UI primitives in `ui.tsx` provide a cohesive foundation for consistent, accessible, and responsive user feedback across the application. By leveraging shared CSS classes and theme variables, they maintain visual harmony and simplify customization. Features and pages can compose these primitives to deliver clear states for loading, errors, and empty data, while ChartState ensures efficient chart rendering during state transitions.
+The UI primitives in `ui.tsx` provide a cohesive foundation for consistent, accessible, and responsive user feedback across the application. By leveraging shared CSS classes and theme variables, they maintain visual harmony and simplify customization. Features and pages can compose these primitives to deliver clear states for loading, errors, and empty data, while ChartState ensures efficient chart rendering during state transitions with support for contextual empty messages. The enhanced ChartState component now provides flexible messaging capabilities while maintaining optimal performance through persistent component mounting.
 
 [No sources needed since this section summarizes without analyzing specific files]

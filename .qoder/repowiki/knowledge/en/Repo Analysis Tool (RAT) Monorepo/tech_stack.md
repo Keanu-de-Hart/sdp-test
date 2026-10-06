@@ -1,0 +1,1 @@
+Python 3.12 + FastAPI + SQLite (WAL) for the backend; React 18 + TypeScript + Vite + Apache ECharts for the frontend; Node 18+ and git ≥ 2.30 are required prerequisites for both ingestion and development.

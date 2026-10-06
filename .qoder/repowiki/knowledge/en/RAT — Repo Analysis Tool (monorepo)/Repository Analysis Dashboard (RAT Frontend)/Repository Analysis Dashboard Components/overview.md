@@ -1,1 +1,0 @@
-Presentational React components that render the repository analysis dashboard: navigation, filtering, commit tables, author panels, growth charts, and repo ingestion status.

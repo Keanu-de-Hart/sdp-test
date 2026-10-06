@@ -1,8 +1,11 @@
+Based on my analysis of the codebase, I can now update the documentation to reflect the changes mentioned: "enhanced with new directory tree view capabilities and improved chart lifecycle management in useECharts hook". Here's the updated documentation:
+
 # Visualization Components
 
 <cite>
 **Referenced Files in This Document**
 - [DirectoryTreemap.tsx](file://frontend/src/components/DirectoryTreemap.tsx)
+- [DirectoryTree.tsx](file://frontend/src/components/DirectoryTree.tsx)
 - [GrowthTimeline.tsx](file://frontend/src/components/GrowthTimeline.tsx)
 - [charts.ts](file://frontend/src/lib/charts.ts)
 - [useECharts.ts](file://frontend/src/lib/useECharts.ts)
@@ -12,6 +15,13 @@
 - [FiltersContext.tsx](file://frontend/src/state/FiltersContext.tsx)
 - [ui.tsx](file://frontend/src/components/ui.tsx)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added comprehensive documentation for the new DirectoryTree component that provides an alternative hierarchical navigation view
+- Enhanced useECharts hook documentation to highlight improved lifecycle management and container re-mounting handling
+- Updated DirectoryTreemap section to document the dual-view capability (treemap and tree views)
+- Improved chart lifecycle management details in the architecture overview
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -25,8 +35,8 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
-This document explains RAT’s ECharts-based visualization layer, focusing on:
-- DirectoryTreemap for hierarchical file structure visualization
+This document explains RAT's ECharts-based visualization layer, focusing on:
+- DirectoryTreemap for hierarchical file structure visualization with dual-view support (treemap and tree)
 - GrowthTimeline for temporal metrics display
 - Shared chart utilities and the useECharts hook integration pattern
 
@@ -39,6 +49,7 @@ The visualization components live under frontend/src/components and are powered 
 graph TB
 subgraph "Components"
 DT["DirectoryTreemap.tsx"]
+DTree["DirectoryTree.tsx"]
 GT["GrowthTimeline.tsx"]
 UI["ui.tsx"]
 end
@@ -59,6 +70,7 @@ DT --> UE
 DT --> HK
 DT --> FC
 DT --> TP
+DT --> DTree
 GT --> CH
 GT --> UE
 GT --> HK
@@ -70,6 +82,7 @@ FC --> TP
 
 **Diagram sources**
 - [DirectoryTreemap.tsx:1-198](file://frontend/src/components/DirectoryTreemap.tsx#L1-L198)
+- [DirectoryTree.tsx:1-55](file://frontend/src/components/DirectoryTree.tsx#L1-L55)
 - [GrowthTimeline.tsx:1-174](file://frontend/src/components/GrowthTimeline.tsx#L1-L174)
 - [charts.ts:1-47](file://frontend/src/lib/charts.ts#L1-L47)
 - [useECharts.ts:1-55](file://frontend/src/lib/useECharts.ts#L1-L55)
@@ -80,6 +93,7 @@ FC --> TP
 
 **Section sources**
 - [DirectoryTreemap.tsx:1-198](file://frontend/src/components/DirectoryTreemap.tsx#L1-L198)
+- [DirectoryTree.tsx:1-55](file://frontend/src/components/DirectoryTree.tsx#L1-L55)
 - [GrowthTimeline.tsx:1-174](file://frontend/src/components/GrowthTimeline.tsx#L1-L174)
 - [charts.ts:1-47](file://frontend/src/lib/charts.ts#L1-L47)
 - [useECharts.ts:1-55](file://frontend/src/lib/useECharts.ts#L1-L55)
@@ -89,10 +103,11 @@ FC --> TP
 - [api.ts:54-126](file://frontend/src/api.ts#L54-L126)
 
 ## Core Components
-- DirectoryTreemap renders a treemap where size represents churn and color encodes growth. Clicking a cell scopes the dashboard to that directory. It also supports an alternate tree view.
-- GrowthTimeline renders added, removed, and growth series over time buckets. Brushing sets a time range filter; internal dataZoom enables panning/zooming.
-- charts.ts provides a consistent palette, axis styling, tooltip defaults, and a diverging color function for growth encoding.
-- useECharts.ts provides a React-friendly ECharts binding with lazy initialization, ResizeObserver-driven responsiveness, option diffing, event wiring, and cleanup.
+- **DirectoryTreemap** renders a treemap where size represents churn and color encodes growth. Clicking a cell scopes the dashboard to that directory. It also supports an alternate tree view for navigation.
+- **DirectoryTree** provides a hierarchical list view of directories with depth-based indentation, showing churn, growth, and modification counts. Clicking any row scopes the dashboard to that directory.
+- **GrowthTimeline** renders added, removed, and growth series over time buckets. Brushing sets a time range filter; internal dataZoom enables panning/zooming.
+- **charts.ts** provides a consistent palette, axis styling, tooltip defaults, and a diverging color function for growth encoding.
+- **useECharts.ts** provides a React-friendly ECharts binding with lazy initialization, ResizeObserver-driven responsiveness, option diffing, event wiring, cleanup, and improved container re-mounting handling.
 
 Key responsibilities:
 - Data fetching and caching: useMetrics debounces filters, keeps previous data while loading, and surfaces loading/error states.
@@ -101,6 +116,7 @@ Key responsibilities:
 
 **Section sources**
 - [DirectoryTreemap.tsx:1-198](file://frontend/src/components/DirectoryTreemap.tsx#L1-L198)
+- [DirectoryTree.tsx:1-55](file://frontend/src/components/DirectoryTree.tsx#L1-L55)
 - [GrowthTimeline.tsx:1-174](file://frontend/src/components/GrowthTimeline.tsx#L1-L174)
 - [charts.ts:1-47](file://frontend/src/lib/charts.ts#L1-L47)
 - [useECharts.ts:1-55](file://frontend/src/lib/useECharts.ts#L1-L55)
@@ -142,7 +158,7 @@ EC-->>User : Rendered chart with tooltips/interactions
 Purpose:
 - Visualize directory hierarchy with size = churn and color = growth.
 - Allow scoping the dashboard to a selected directory via click.
-- Provide an alternative tree view for navigation.
+- Provide an alternative tree view for navigation through toggle controls.
 
 Data flow:
 - Fetches DirsResponse via useMetrics(view="dirs").
@@ -151,7 +167,8 @@ Data flow:
 
 Interactivity:
 - Click handler updates filters to scope to the clicked directory path.
-- Header controls toggle between treemap and tree views and provide “Up” navigation.
+- Header controls toggle between treemap and tree views and provide "Up" navigation.
+- Supports both treemap visualization and hierarchical tree list view.
 
 Accessibility:
 - The header includes aria-label for the view group.
@@ -168,20 +185,45 @@ Fetch --> BuildTree["Build TreeNode tree<br/>rooted at scope"]
 BuildTree --> Color["Assign divergingColor per growth"]
 Color --> Option["Create EChartsOption (treemap)"]
 Option --> Render["useECharts mounts/resizes chart"]
-Render --> Click{"Click node?"}
+Render --> View{"View mode?"}
+View --> |Treemap| Treemap["Render ECharts treemap"]
+View --> |Tree| Tree["Render DirectoryTree component"]
+Treemap --> Click{"Click node?"}
+Tree --> Click2{"Click row?"}
 Click --> |Yes| Scope["Set filters.path/type to dir"]
-Click --> |No| Idle["Idle"]
+Click2 --> |Yes| Scope
 Scope --> Render
 ```
 
 **Diagram sources**
 - [DirectoryTreemap.tsx:26-56](file://frontend/src/components/DirectoryTreemap.tsx#L26-L56)
 - [DirectoryTreemap.tsx:76-123](file://frontend/src/components/DirectoryTreemap.tsx#L76-L123)
+- [DirectoryTreemap.tsx:135-191](file://frontend/src/components/DirectoryTreemap.tsx#L135-L191)
 - [charts.ts:35-46](file://frontend/src/lib/charts.ts#L35-L46)
 
 **Section sources**
 - [DirectoryTreemap.tsx:1-198](file://frontend/src/components/DirectoryTreemap.tsx#L1-L198)
 - [charts.ts:35-46](file://frontend/src/lib/charts.ts#L35-L46)
+
+### DirectoryTree
+Purpose:
+- Provide a hierarchical list view of directories with depth-based indentation.
+- Display directory metrics including churn, growth, and modification counts.
+- Enable directory scoping through row clicks, matching treemap behavior.
+
+Features:
+- Depth-based indentation shows hierarchical relationships.
+- Current directory highlighting indicates active scope.
+- Consistent styling with the overall application theme.
+- Click-to-scope functionality identical to treemap interactions.
+
+Data presentation:
+- Shows relative path names with proper indentation levels.
+- Displays numerical metrics with appropriate formatting.
+- Highlights positive/negative growth values with color coding.
+
+**Section sources**
+- [DirectoryTree.tsx:1-55](file://frontend/src/components/DirectoryTree.tsx#L1-L55)
 
 ### GrowthTimeline
 Purpose:
@@ -251,6 +293,7 @@ Responsibilities:
 - Apply EChartsOption with diffing enabled to minimize re-renders.
 - Wire up custom events (e.g., click, brushEnd) via a ref-backed event map.
 - Clean up ResizeObserver and dispose chart instance on unmount.
+- **Enhanced**: Handle container re-mounting scenarios by detecting when the DOM element changes and properly disposing/reinitializing chart instances.
 
 Integration points:
 - DirectoryTreemap passes option and click handler.
@@ -258,6 +301,8 @@ Integration points:
 
 Responsive behavior:
 - ResizeObserver ensures charts adapt to container resizing without manual resize calls.
+
+**Updated** The useECharts hook now includes improved lifecycle management that handles container re-mounting scenarios. When a chart container is replaced (e.g., due to state changes), the hook automatically detects this condition, disposes the stale chart instance bound to the detached node, and reinitializes the chart with the new container. This prevents memory leaks and ensures proper chart rendering in dynamic React applications.
 
 **Section sources**
 - [useECharts.ts:1-55](file://frontend/src/lib/useECharts.ts#L1-L55)
@@ -274,6 +319,8 @@ DT --> UE["useECharts.ts"]
 DT --> HK["hooks.ts"]
 DT --> FC["FiltersContext.tsx"]
 DT --> TP["types.ts"]
+DT --> DTree["DirectoryTree.tsx"]
+DTree --> TP
 GT["GrowthTimeline.tsx"] --> CH
 GT --> UE
 GT --> HK
@@ -285,6 +332,7 @@ FC --> TP
 
 **Diagram sources**
 - [DirectoryTreemap.tsx:1-198](file://frontend/src/components/DirectoryTreemap.tsx#L1-L198)
+- [DirectoryTree.tsx:1-55](file://frontend/src/components/DirectoryTree.tsx#L1-L55)
 - [GrowthTimeline.tsx:1-174](file://frontend/src/components/GrowthTimeline.tsx#L1-L174)
 - [charts.ts:1-47](file://frontend/src/lib/charts.ts#L1-L47)
 - [useECharts.ts:1-55](file://frontend/src/lib/useECharts.ts#L1-L55)
@@ -297,6 +345,7 @@ Coupling and cohesion:
 - Components depend on shared utilities (charts.ts) and the ECharts binding (useECharts.ts), keeping chart logic cohesive and reusable.
 - Data fetching is abstracted behind useMetrics, decoupling components from network details.
 - FiltersContext centralizes filter serialization and API contract translation, reducing duplication.
+- DirectoryTreemap composes DirectoryTree for alternative visualization modes.
 
 Potential circular dependencies:
 - None observed among these modules; imports are one-directional from components to lib/state/api.
@@ -307,6 +356,7 @@ External integrations:
 
 **Section sources**
 - [DirectoryTreemap.tsx:1-198](file://frontend/src/components/DirectoryTreemap.tsx#L1-L198)
+- [DirectoryTree.tsx:1-55](file://frontend/src/components/DirectoryTree.tsx#L1-L55)
 - [GrowthTimeline.tsx:1-174](file://frontend/src/components/GrowthTimeline.tsx#L1-L174)
 - [hooks.ts:51-99](file://frontend/src/lib/hooks.ts#L51-L99)
 - [FiltersContext.tsx:1-119](file://frontend/src/state/FiltersContext.tsx#L1-L119)
@@ -320,11 +370,13 @@ External integrations:
 - Responsive sizing: ResizeObserver triggers chart.resize() only when needed, avoiding unnecessary layout thrashing.
 - Tree sorting: DirectoryTreemap sorts children by value to improve visual scanning and reduce cognitive load.
 - Brush throttling: GrowthTimeline uses debounce throttle for brush operations to limit filter updates during dragging.
+- **Enhanced**: Improved chart lifecycle management prevents memory leaks and ensures proper cleanup when containers are re-mounted.
 
 Recommendations for very large datasets:
 - Consider server-side pagination or sampling for timeseries if commit counts are extremely high.
 - Use visibleMin in treemap to hide tiny nodes and improve interactivity.
 - Limit series length by adjusting granularity (day/week/month) based on dataset size.
+- Leverage the tree view for better performance with large directory hierarchies compared to treemap visualization.
 
 [No sources needed since this section provides general guidance]
 
@@ -341,9 +393,13 @@ Common issues and resolutions:
   - Ensure chartRef.dispatchAction clears the brush after applying the filter.
 - Memory leaks or stale instances:
   - useECharts disposes the chart and disconnects ResizeObserver on unmount. If components are swapped frequently, ensure old containers are detached so the hook can reinitialize.
+  - **Enhanced**: The improved lifecycle management now handles container re-mounting scenarios automatically, preventing stale chart instances.
+- Tree view not displaying:
+  - Ensure DirectoryTree component is properly imported and rendered when switching from treemap view.
+  - Verify that the directory data structure matches the expected format with depth information.
 
 Error presentation:
-- ui.tsx’s ChartState overlays Loading, ErrorNote, or Empty messages without detaching the underlying chart canvas, preserving ECharts state and improving perceived performance.
+- ui.tsx's ChartState overlays Loading, ErrorNote, or Empty messages without detaching the underlying chart canvas, preserving ECharts state and improving perceived performance.
 
 **Section sources**
 - [useECharts.ts:16-51](file://frontend/src/lib/useECharts.ts#L16-L51)
@@ -352,6 +408,4 @@ Error presentation:
 - [FiltersContext.tsx:93-104](file://frontend/src/state/FiltersContext.tsx#L93-L104)
 
 ## Conclusion
-RAT’s visualization layer combines well-scoped components with shared utilities and a robust ECharts integration pattern. DirectoryTreemap and GrowthTimeline transform API responses into intuitive, interactive charts while maintaining consistent styling and accessibility. The useECharts hook abstracts lifecycle concerns, enabling responsive and performant charts. FiltersContext and useMetrics provide a clean separation between UI state, data fetching, and chart rendering, making the system extensible and maintainable.
-
-[No sources needed since this section summarizes without analyzing specific files]
+RAT's visualization layer combines well-scoped components with shared utilities and a robust ECharts integration pattern. DirectoryTreemap and GrowthTimeline transform API responses into intuitive, interactive charts while maintaining consistent styling and accessibility. The enhanced DirectoryTree component provides an alternative hierarchical navigation view for better usability with large directory structures. The improved useECharts hook abstracts lifecycle concerns with enhanced container re-mounting handling, enabling responsive and performant charts. FiltersContext and useMetrics provide a clean separation between UI state, data fetching, and chart rendering, making the system extensible and maintainable.

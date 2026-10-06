@@ -1,0 +1,1 @@
+Presentational React/TypeScript components that render the RAT dashboard: navigation, filtering, commit tables, author panels, growth charts, and repo ingestion status.

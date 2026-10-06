@@ -1,0 +1,1 @@
+Vite/React SPA that renders the RAT dashboard, wiring routing, global contexts, and shared utilities into per-repo pages and reusable components.

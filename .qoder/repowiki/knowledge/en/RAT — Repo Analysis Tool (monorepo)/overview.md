@@ -1,1 +1,0 @@
-Top-level monorepo that wires the FastAPI backend and Vite/React frontend behind shared Makefile targets, exposing a single REST API consumed by the dashboard.

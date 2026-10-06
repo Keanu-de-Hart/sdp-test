@@ -1,7 +1,0 @@
-Flat directory of React function components under `frontend/src/components/`, organized by feature rather than layer:
-- Shared primitives live in `ui.tsx` (`StatusBadge`, `Progress`, `Empty`, `ErrorNote`, `Loading`, `ChartState`) and are re-exported by every data-bearing component to handle loading/error/empty states uniformly.
-- Navigation is split into `NavBar.tsx` (global nav + per-repo breadcrumb via `react-router-dom`'s `NavLink`) and `RepoGate.tsx` (ingestion progress card driven by `../lib/hooks.isRepoActive`).
-- Filtering is centralized through `../state/FiltersContext` (`useFilters()`); `FilterBar.tsx` composes `AuthorSelect`, `CommitPicker`, and `PathPicker` and drives URL-synced filters (`start`, `end`, `commits`, `authors`, `path`, `gran`, `mode`).
-- Data fetching goes through `../lib/hooks.useMetrics(repoId, endpoint, params)`; `CommitSetTable` and `GrowthTimeline` are the main consumers, with `CommitSetTable` implementing client-side pagination over the server-paginated `commits` endpoint.
-- Charts use ECharts via the local `../lib/useECharts` hook; `GrowthTimeline` builds an `EChartsOption` with brush selection that writes back into `setFilters` to set the time range.
-- All styling is class-name based against a shared stylesheet (e.g. `card`, `card-header`, `table-wrap`, `badge pos/neg/warn`, `spinner`); no CSS-in-JS or styled-components.

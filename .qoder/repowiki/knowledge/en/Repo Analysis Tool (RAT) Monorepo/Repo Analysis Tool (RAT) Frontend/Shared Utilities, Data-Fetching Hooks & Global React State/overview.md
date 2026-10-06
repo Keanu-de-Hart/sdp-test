@@ -1,0 +1,1 @@
+Cross-cutting React hooks, pure formatting/time/chart helpers, and global contexts (URL-synced dashboard filters and toast notifications) consumed by the RAT dashboard.

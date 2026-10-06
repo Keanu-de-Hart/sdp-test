@@ -1,0 +1,1 @@
+Monorepo wiring a FastAPI/SQLite backend and a Vite/React SPA behind shared Makefile targets, exposing one REST API consumed by the dashboard.

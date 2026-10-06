@@ -3,11 +3,11 @@ schema_version: 1
 locale: en-US
 branch: main
 nodes_managed: true
-exported_at: "2026-10-06T14:09:04Z"
+exported_at: "2026-10-06T14:40:58Z"
 modules:
     "":
-        dir_name: RAT — Repo Analysis Tool (monorepo)
-        title: RAT — Repo Analysis Tool (monorepo)
+        dir_name: Repo Analysis Tool (RAT) Monorepo
+        title: Repo Analysis Tool (RAT) Monorepo
         scope:
             - README.md
             - Makefile
@@ -64,7 +64,9 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: backend/tests
+            - path: frontend/shared_lib_and_state
     backend/tests:
         dir_name: Repository Metrics Test Suite
         title: Repository Metrics Test Suite
@@ -75,9 +77,10 @@ modules:
         depends_on: []
         related_to:
             - path: backend/api_routers
+            - path: backend/app_core/app_bootstrap
     frontend:
-        dir_name: Repository Analysis Dashboard (RAT Frontend)
-        title: Repository Analysis Dashboard (RAT Frontend)
+        dir_name: Repo Analysis Tool (RAT) Frontend
+        title: Repo Analysis Tool (RAT) Frontend
         scope:
             - frontend/
         source_files: []
@@ -89,15 +92,14 @@ modules:
         related_to:
             - path: backend/api_routers
     frontend/components:
-        dir_name: Repository Analysis Dashboard Components
-        title: Repository Analysis Dashboard Components
+        dir_name: Repo Analysis Dashboard Components
+        title: Repo Analysis Dashboard Components
         scope:
             - frontend/src/components/
         source_files: []
         children: []
         depends_on: []
-        related_to:
-            - path: frontend/shared_lib_and_state
+        related_to: []
     frontend/pages:
         dir_name: Application Shell & Top-Level Pages
         title: Application Shell & Top-Level Pages
@@ -108,11 +110,10 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to:
-            - path: frontend/shared_lib_and_state
+        related_to: []
     frontend/shared_lib_and_state:
-        dir_name: Shared Utilities, Hooks & Global State
-        title: Shared Utilities, Hooks & Global State
+        dir_name: Shared Utilities, Data-Fetching Hooks & Global React State
+        title: Shared Utilities, Data-Fetching Hooks & Global React State
         scope:
             - frontend/src/lib/
             - frontend/src/state/
@@ -120,5 +121,4 @@ modules:
         children: []
         depends_on: []
         related_to:
-            - path: frontend/components
-            - path: frontend/pages
+            - path: backend/app_core/app_bootstrap

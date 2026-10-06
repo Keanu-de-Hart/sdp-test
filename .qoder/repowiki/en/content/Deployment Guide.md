@@ -4,6 +4,7 @@
 **Referenced Files in This Document**
 - [README.md](file://README.md)
 - [Makefile](file://Makefile)
+- [start.sh](file://start.sh)
 - [backend/app/main.py](file://backend/app/main.py)
 - [backend/app/config.py](file://backend/app/config.py)
 - [backend/app/db.py](file://backend/app/db.py)
@@ -11,6 +12,13 @@
 - [backend/app/routers/repos.py](file://backend/app/routers/repos.py)
 - [frontend/vite.config.ts](file://frontend/vite.config.ts)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added documentation for the new `start.sh` one-shot deployment script
+- Updated quick start examples to include the simplified deployment workflow
+- Enhanced deployment examples with both traditional Makefile approach and new one-shot script
+- Updated project structure documentation to reflect current directory layout
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -27,18 +35,19 @@
 ## Introduction
 This guide explains how to deploy RAT, a multi-repository web dashboard that turns Git history into filterable metrics. It focuses on production deployment using the single-port mode, environment configuration, database setup with SQLite WAL mode, repository storage requirements, security considerations for exposing the API, monitoring and logging strategies, backup procedures, scaling across multiple repositories, and example deployments for local development, staging, and production environments.
 
-RAT’s backend is a FastAPI application backed by SQLite, while the frontend is a React + TypeScript application built with Vite. The Makefile provides convenient commands for installation, development, building, running, testing, and verification.
+RAT's backend is a FastAPI application backed by SQLite, while the frontend is a React + TypeScript application built with Vite. The project now provides two deployment approaches: a convenient one-shot script (`start.sh`) for rapid deployment and traditional Makefile commands for granular control.
 
 **Section sources**
 - [README.md:1-15](file://README.md#L1-L15)
-- [README.md:67-76](file://README.md#L67-L76)
+- [README.md:67-79](file://README.md#L67-L79)
+- [start.sh:1-11](file://start.sh#L1-L11)
 
 ## Project Structure
 At a high level, RAT consists of:
 - Backend: Python FastAPI application under `backend/app`, including routers, ingestion logic, database schema, and configuration.
 - Frontend: React + TypeScript application under `frontend/src`, built by Vite into a static distribution served by the backend in production.
 - Scripts: Verification utilities under `scripts`.
-- Makefile: Entry points for install, dev, build, run, test, verify, and clean.
+- Deployment scripts: `start.sh` for one-shot deployment and `Makefile` for granular control.
 
 ```mermaid
 graph TB
@@ -52,9 +61,11 @@ end
 subgraph "Frontend"
 V["vite.config.ts"]
 end
-subgraph "Build & Run"
+subgraph "Deployment"
+SS["start.sh"]
 MK["Makefile"]
 end
+SS --> MK
 MK --> M
 M --> C
 M --> D
@@ -64,6 +75,7 @@ MK --> V
 ```
 
 **Diagram sources**
+- [start.sh:1-11](file://start.sh#L1-L11)
 - [Makefile:1-63](file://Makefile#L1-L63)
 - [backend/app/main.py:1-49](file://backend/app/main.py#L1-L49)
 - [backend/app/config.py:1-15](file://backend/app/config.py#L1-L15)
@@ -73,17 +85,18 @@ MK --> V
 - [frontend/vite.config.ts:1-27](file://frontend/vite.config.ts#L1-L27)
 
 **Section sources**
-- [README.md:196-206](file://README.md#L196-L206)
+- [README.md:201-211](file://README.md#L201-L211)
 - [Makefile:1-63](file://Makefile#L1-L63)
 
 ## Core Components
-- Single-port production mode: `make run` builds the frontend and serves both API and static assets from one process on port 8000.
-- Environment configuration:
+- **One-shot deployment**: `./start.sh` automates the entire setup process - installs dependencies, builds the frontend, and serves everything on port 8000.
+- **Single-port production mode**: `make run` builds the frontend and serves both API and static assets from one process on port 8000.
+- **Environment configuration**:
   - `RAT_DATA_DIR`: Directory containing the SQLite database and repository data. Defaults to `backend/data`.
   - `RAT_FRONTEND_DIST`: Path to the built frontend distribution. Defaults to `frontend/dist`.
-- Database: SQLite with WAL mode enabled at connection time; schema includes repositories, commits, file changes, author merges, and merge groups.
-- Repository storage: Each repository is stored under `REPOS_DIR/repo_id`, created automatically.
-- Ingestion: Background threads handle cloning or extracting archives, then stream-index the Git history via `git log --numstat -z`.
+- **Database**: SQLite with WAL mode enabled at connection time; schema includes repositories, commits, file changes, author merges, and merge groups.
+- **Repository storage**: Each repository is stored under `REPOS_DIR/repo_id`, created automatically.
+- **Ingestion**: Background threads handle cloning or extracting archives, then stream-index the Git history via `git log --numstat -z`.
 
 Key runtime paths:
 - Database path: `DB_PATH = DATA_DIR / "rat.db"`
@@ -91,6 +104,7 @@ Key runtime paths:
 - Frontend distribution: `FRONTEND_DIST` (from environment or default)
 
 **Section sources**
+- [start.sh:1-11](file://start.sh#L1-L11)
 - [backend/app/config.py:1-15](file://backend/app/config.py#L1-L15)
 - [backend/app/db.py:13-87](file://backend/app/db.py#L13-L87)
 - [backend/app/ingest.py:35-39](file://backend/app/ingest.py#L35-L39)
@@ -132,7 +146,29 @@ Note over DB,FS : Ingest thread clones/extracts repo,<br/>streams git log, write
 
 ## Detailed Component Analysis
 
+### One-Shot Deployment with start.sh
+The `start.sh` script provides a streamlined deployment experience:
+- **Idempotent installation**: Installs Python virtual environment and Node.js dependencies only once
+- **Automated build**: Builds the frontend during the first run
+- **Immediate service**: Starts the complete application on `http://localhost:8000`
+
+Usage:
+```bash
+./start.sh
+```
+
+This is ideal for:
+- Quick development setups
+- Containerized deployments
+- Demo environments
+- Rapid prototyping
+
+**Section sources**
+- [start.sh:1-11](file://start.sh#L1-L11)
+- [README.md:71-79](file://README.md#L71-L79)
+
 ### Production Mode and Makefile Commands
+For granular control, the Makefile provides comprehensive commands:
 - `make install`: Creates a Python virtual environment, installs backend dependencies, and installs frontend dependencies.
 - `make dev`: Runs the API on `127.0.0.1:8000` with auto-reload and the Vite dev server on `:5173`.
 - `make api`: Runs only the API on `0.0.0.0:8000` with auto-reload.
@@ -316,11 +352,15 @@ NP --> FE["Frontend Build (dist)"]
 These characteristics make RAT suitable for interactive dashboards even with large histories.
 
 **Section sources**
-- [README.md:168-179](file://README.md#L168-L179)
+- [README.md:173-183](file://README.md#L173-L183)
 - [backend/app/ingest.py:280-354](file://backend/app/ingest.py#L280-L354)
 
 ## Troubleshooting Guide
 Common issues and resolutions:
+- **One-shot deployment fails**:
+  - Check Python and Node.js versions meet prerequisites (Python 3.10+, Node 18+).
+  - Verify write permissions to the current directory.
+  - Check network connectivity for dependency downloads.
 - Frontend not served:
   - Ensure the frontend is built (`make build`) or run in dev mode (`make dev`).
   - Check that `FRONTEND_DIST` exists and contains `index.html`.
@@ -343,10 +383,10 @@ Useful commands:
 - [backend/app/main.py:33-48](file://backend/app/main.py#L33-L48)
 - [backend/app/routers/repos.py:50-78](file://backend/app/routers/repos.py#L50-L78)
 - [backend/app/ingest.py:362-439](file://backend/app/ingest.py#L362-L439)
-- [README.md:142-156](file://README.md#L142-L156)
+- [README.md:147-152](file://README.md#L147-L152)
 
 ## Conclusion
-RAT’s production deployment centers around a single FastAPI process serving both API and static assets. Use `make run` for production, configure `RAT_DATA_DIR` and `RAT_FRONTEND_DIST` appropriately, protect the API with a reverse proxy, and back up both the SQLite database and repository mirrors. With WAL-enabled SQLite, streamed ingestion, and indexed queries, RAT scales well for multiple repositories when paired with proper resource planning and operational safeguards.
+RAT's production deployment centers around a single FastAPI process serving both API and static assets. The new `start.sh` script provides a streamlined one-shot deployment experience, while the traditional Makefile approach offers granular control for complex scenarios. Use `./start.sh` for rapid deployment or `make run` for production, configure `RAT_DATA_DIR` and `RAT_FRONTEND_DIST` appropriately, protect the API with a reverse proxy, and back up both the SQLite database and repository mirrors. With WAL-enabled SQLite, streamed ingestion, and indexed queries, RAT scales well for multiple repositories when paired with proper resource planning and operational safeguards.
 
 [No sources needed since this section summarizes without analyzing specific files]
 
@@ -354,20 +394,40 @@ RAT’s production deployment centers around a single FastAPI process serving bo
 
 ### Deployment Examples
 
+#### One-Shot Deployment (Recommended for Quick Start)
+The simplest way to get RAT running:
+```bash
+./start.sh
+```
+This automates the entire process:
+- Creates Python virtual environment and installs dependencies
+- Installs Node.js dependencies
+- Builds the frontend
+- Starts the application on `http://localhost:8000`
+
+**Section sources**
+- [start.sh:1-11](file://start.sh#L1-L11)
+- [README.md:71-79](file://README.md#L71-L79)
+
 #### Local Development
-- Install dependencies and run both API and frontend dev servers:
-  - `make install`
-  - `make dev`
-- Open the frontend at `http://localhost:5173`; the API proxies `/api` to `http://localhost:8000`.
+For development with hot reloading:
+```bash
+make install
+make dev
+```
+- Install dependencies and run both API and frontend dev servers
+- Open the frontend at `http://localhost:5173`; the API proxies `/api` to `http://localhost:8000`
 
 **Section sources**
 - [Makefile:35-46](file://Makefile#L35-L46)
 - [frontend/vite.config.ts:6-13](file://frontend/vite.config.ts#L6-L13)
 
 #### Staging
-- Build the frontend and run the single-port production server:
-  - `make build`
-  - `make run`
+Build the frontend and run the single-port production server:
+```bash
+make build
+make run
+```
 - Place behind a reverse proxy with HTTPS and basic access controls.
 - Set `RAT_DATA_DIR` to a persistent volume.
 
@@ -376,18 +436,28 @@ RAT’s production deployment centers around a single FastAPI process serving bo
 - [backend/app/config.py:8-11](file://backend/app/config.py#L8-L11)
 
 #### Production
-- Build the frontend once and serve it via the backend:
-  - `make build`
-  - `make run`
-- Reverse proxy configuration:
-  - Terminate TLS at the proxy.
-  - Restrict CORS to your frontend domain.
-  - Enforce authentication and rate limiting.
-- Operational hardening:
-  - Run under a process supervisor.
-  - Monitor disk usage and SQLite files.
-  - Schedule regular backups of `RAT_DATA_DIR`.
+For production deployments:
+```bash
+make build
+make run
+```
+
+Or use the one-shot script for containerized deployments:
+```bash
+./start.sh
+```
+
+Reverse proxy configuration:
+- Terminate TLS at the proxy.
+- Restrict CORS to your frontend domain.
+- Enforce authentication and rate limiting.
+
+Operational hardening:
+- Run under a process supervisor.
+- Monitor disk usage and SQLite files.
+- Schedule regular backups of `RAT_DATA_DIR`.
 
 **Section sources**
 - [backend/app/main.py:15-20](file://backend/app/main.py#L15-L20)
 - [backend/app/config.py:8-11](file://backend/app/config.py#L8-L11)
+- [start.sh:1-11](file://start.sh#L1-L11)

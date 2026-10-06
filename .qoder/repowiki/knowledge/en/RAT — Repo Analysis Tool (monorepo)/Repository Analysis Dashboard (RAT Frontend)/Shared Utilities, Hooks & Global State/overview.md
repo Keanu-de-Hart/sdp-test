@@ -1,1 +1,0 @@
-Cross-cutting React hooks, pure formatting/time/chart helpers, and global React contexts (filters URL-synced state and toast notifications) used across the dashboard.
