@@ -1,0 +1,1 @@
+FastAPI application that wires repository ingestion, SQLite persistence, and REST routers into a single service serving both the API and the built frontend SPA.

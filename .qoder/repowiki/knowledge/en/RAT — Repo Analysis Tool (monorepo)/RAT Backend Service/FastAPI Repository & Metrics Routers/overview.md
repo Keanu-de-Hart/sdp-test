@@ -1,0 +1,1 @@
+FastAPI route modules exposing REST endpoints for repository lifecycle, author management, commit browsing, and metric views backed by SQLite.

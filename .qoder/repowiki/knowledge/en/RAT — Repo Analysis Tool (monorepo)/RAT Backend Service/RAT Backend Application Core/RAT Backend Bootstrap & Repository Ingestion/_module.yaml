@@ -1,0 +1,12 @@
+schema_version: 1
+module_path: backend/app_core/app_bootstrap
+title: RAT Backend Bootstrap & Repository Ingestion
+scope:
+    - backend/app/main.py
+    - backend/app/config.py
+    - backend/app/db.py
+    - backend/app/ingest.py
+    - backend/app/schemas.py
+source_files: []
+depends_on: []
+related_to: []

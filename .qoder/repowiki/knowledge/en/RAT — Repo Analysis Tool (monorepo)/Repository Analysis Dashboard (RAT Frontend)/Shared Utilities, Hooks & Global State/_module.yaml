@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: frontend/shared_lib_and_state
+title: Shared Utilities, Hooks & Global State
+scope:
+    - frontend/src/lib/
+    - frontend/src/state/
+source_files: []
+depends_on: []
+related_to:
+    - path: frontend/components
+    - path: frontend/pages

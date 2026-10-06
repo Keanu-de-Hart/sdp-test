@@ -1,0 +1,5 @@
+- Route handlers wrap every database access in `with db.connect() as conn:` blocks rather than managing connections manually.
+- Repository-scoped endpoints validate the target repository exists by calling the shared `_get_repo(conn, repo_id)` helper before performing any read or write.
+- Mutating endpoints that alter author merges or delete repos invoke `metrics.cache_invalidate(repo_id)` after the transaction commits to keep cached metric responses stale-free.
+- Request bodies are typed via Pydantic models from `..schemas` (`CloneRequest`, `MetricsFilters`, `MergeRequest`) instead of raw `dict` parameters.
+- Errors are raised as FastAPI `HTTPException` with explicit `status_code` and human-readable `detail` strings rather than returning error dicts.

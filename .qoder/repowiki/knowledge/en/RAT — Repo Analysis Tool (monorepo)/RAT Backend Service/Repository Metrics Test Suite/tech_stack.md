@@ -1,0 +1,1 @@
+pytest + FastAPI `TestClient`; real `git` CLI invoked via `subprocess` to build the fixture repo; SQLite-backed app database accessed through `app.db`.

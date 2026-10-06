@@ -1,0 +1,1 @@
+FastAPI `APIRouter` + Pydantic v2 models; SQLite accessed via a custom `db.connect()` context manager; upload handling uses Python stdlib `zipfile` and `tempfile`.

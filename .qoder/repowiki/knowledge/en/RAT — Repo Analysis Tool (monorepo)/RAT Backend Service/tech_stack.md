@@ -1,0 +1,1 @@
+FastAPI + Pydantic for the API layer, Python's `git` library for repository access, and SQLite (via `sqlite3`) for persistence — all children share these dependencies declared in `requirements.txt`.

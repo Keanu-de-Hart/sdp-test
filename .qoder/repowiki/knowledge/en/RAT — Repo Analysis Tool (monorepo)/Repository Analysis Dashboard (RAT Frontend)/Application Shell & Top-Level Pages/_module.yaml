@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: frontend/pages
+title: Application Shell & Top-Level Pages
+scope:
+    - frontend/src/pages/
+    - frontend/src/App.tsx
+    - frontend/src/main.tsx
+source_files: []
+depends_on: []
+related_to:
+    - path: frontend/shared_lib_and_state

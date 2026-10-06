@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: backend/app_core
+title: RAT Backend Application Core
+scope:
+    - backend/app/
+source_files: []
+depends_on: []
+related_to: []

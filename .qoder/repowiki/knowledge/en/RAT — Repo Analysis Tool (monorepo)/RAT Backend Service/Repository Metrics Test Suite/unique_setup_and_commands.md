@@ -1,0 +1,1 @@
+Tests require a working `git` on PATH because `conftest.py` calls `shutil.which("git")` and runs `git init/config/commit/checkout/merge`. The fixture repo is built under a temp root created by `tmp_path_factory.mktemp`, and the app's data directory is forced to `RAT_DATA_DIR` before importing `app` so each run gets a fresh SQLite store.

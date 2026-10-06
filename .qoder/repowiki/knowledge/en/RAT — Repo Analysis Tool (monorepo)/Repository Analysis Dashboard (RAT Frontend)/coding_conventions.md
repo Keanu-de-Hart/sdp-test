@@ -1,0 +1,3 @@
+- Cross-cutting UI state (filters URL-synced via search params, toast notifications) is exposed through React contexts in `state/` and injected at the route level rather than passed as props.
+- Components are colocated under `components/` and kept presentational, delegating data fetching to `api.ts` and formatting to `lib/` helpers.
+- Chart rendering uses the shared `useECharts` hook from `lib/` instead of direct ECharts instantiation inside components.

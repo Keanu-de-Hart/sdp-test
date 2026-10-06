@@ -1,0 +1,1 @@
+React 18 + TypeScript + Vite 5 as the build toolchain; `react-router-dom` v6 for routing; `echarts` v5 for charts (wrapped by `lib/useECharts.ts`); CSS-in-HTML via `theme.css` and Tailwind-like utility classes in `ui.tsx`.

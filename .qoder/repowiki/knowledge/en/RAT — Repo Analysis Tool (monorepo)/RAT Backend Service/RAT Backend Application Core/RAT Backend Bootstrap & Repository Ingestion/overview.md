@@ -1,0 +1,1 @@
+FastAPI application bootstrap, SQLite schema, runtime configuration, Pydantic request schemas, and the background repository ingestion pipeline that clones/zips and streams git history into SQLite.

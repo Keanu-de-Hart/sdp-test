@@ -1,0 +1,1 @@
+React hooks + TypeScript; ECharts (`echarts` package) bound through a custom `useECharts` hook; URL state via `react-router-dom`'s `useSearchParams`.

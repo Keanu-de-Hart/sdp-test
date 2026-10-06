@@ -1,0 +1,124 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: main
+nodes_managed: true
+exported_at: "2026-10-06T14:09:04Z"
+modules:
+    "":
+        dir_name: RAT — Repo Analysis Tool (monorepo)
+        title: RAT — Repo Analysis Tool (monorepo)
+        scope:
+            - README.md
+            - Makefile
+            - .gitignore
+        source_files: []
+        children:
+            - backend
+            - frontend
+        depends_on: []
+        related_to: []
+    backend:
+        dir_name: RAT Backend Service
+        title: RAT Backend Service
+        scope:
+            - backend/
+        source_files: []
+        children:
+            - backend/api_routers
+            - backend/app_core
+            - backend/tests
+        depends_on: []
+        related_to: []
+    backend/api_routers:
+        dir_name: FastAPI Repository & Metrics Routers
+        title: FastAPI Repository & Metrics Routers
+        scope:
+            - backend/app/routers/
+            - backend/app/schemas.py
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: backend/tests
+            - path: frontend
+    backend/app_core:
+        dir_name: RAT Backend Application Core
+        title: RAT Backend Application Core
+        scope:
+            - backend/app/
+        source_files: []
+        children:
+            - backend/app_core/app_bootstrap
+        depends_on: []
+        related_to: []
+    backend/app_core/app_bootstrap:
+        dir_name: RAT Backend Bootstrap & Repository Ingestion
+        title: RAT Backend Bootstrap & Repository Ingestion
+        scope:
+            - backend/app/main.py
+            - backend/app/config.py
+            - backend/app/db.py
+            - backend/app/ingest.py
+            - backend/app/schemas.py
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    backend/tests:
+        dir_name: Repository Metrics Test Suite
+        title: Repository Metrics Test Suite
+        scope:
+            - backend/tests/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: backend/api_routers
+    frontend:
+        dir_name: Repository Analysis Dashboard (RAT Frontend)
+        title: Repository Analysis Dashboard (RAT Frontend)
+        scope:
+            - frontend/
+        source_files: []
+        children:
+            - frontend/components
+            - frontend/pages
+            - frontend/shared_lib_and_state
+        depends_on: []
+        related_to:
+            - path: backend/api_routers
+    frontend/components:
+        dir_name: Repository Analysis Dashboard Components
+        title: Repository Analysis Dashboard Components
+        scope:
+            - frontend/src/components/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: frontend/shared_lib_and_state
+    frontend/pages:
+        dir_name: Application Shell & Top-Level Pages
+        title: Application Shell & Top-Level Pages
+        scope:
+            - frontend/src/pages/
+            - frontend/src/App.tsx
+            - frontend/src/main.tsx
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: frontend/shared_lib_and_state
+    frontend/shared_lib_and_state:
+        dir_name: Shared Utilities, Hooks & Global State
+        title: Shared Utilities, Hooks & Global State
+        scope:
+            - frontend/src/lib/
+            - frontend/src/state/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: frontend/components
+            - path: frontend/pages

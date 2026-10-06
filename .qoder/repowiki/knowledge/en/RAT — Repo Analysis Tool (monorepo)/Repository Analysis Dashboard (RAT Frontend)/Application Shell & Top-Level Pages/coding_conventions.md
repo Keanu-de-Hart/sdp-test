@@ -1,0 +1,5 @@
+- Pages follow an early-return error/loading pattern: render `<ErrorNote>` when an error exists, `<Loading>` when data is absent, and only the main content once both are resolved.
+- Repository-scoped pages read `repoId` from `useParams()` and pass it to `useRepo(repoId)` / `useAuthors(repoId)` rather than holding it in local state.
+- User-facing errors are normalized via a local `errMsg(e)` helper that extracts `e.message` for `Error` instances before passing to `toast.push(..., "error")`.
+- Long-running mutations wrap their body in `setBusy(true)` / try/catch / `finally { setBusy(false) }` to disable controls and show spinners consistently.
+- Side effects that poll or subscribe use `useEffect` with explicit cleanup (e.g. `window.clearInterval`) keyed on the relevant state flags like `anyActive`.

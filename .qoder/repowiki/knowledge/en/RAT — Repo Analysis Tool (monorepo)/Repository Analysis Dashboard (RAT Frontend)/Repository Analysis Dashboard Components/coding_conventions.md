@@ -1,0 +1,5 @@
+- Data-bearing components wrap their content with the `ChartState` primitive from `./ui.tsx`, passing `loading`, `error`, and `empty` booleans so error/loading/empty states are rendered consistently.
+- Server data is fetched through the `useMetrics<T>(repoId, endpoint, params)` hook from `../lib/hooks`, typed with the corresponding response type from `../types`.
+- Shared UI state (filters, repo id, mode) is read and mutated via the `useFilters()` context from `../state/FiltersContext` rather than prop drilling.
+- Components compose smaller presentational pieces from sibling files (e.g. `FilterBar` composes `AuthorSelect`, `CommitPicker`, `PathPicker`; `RepoNav` uses `StatusBadge`) instead of inlining complex sub-UI.
+- Styling relies on semantic class names (`card`, `card-header`, `card-body`, `table-wrap`, `badge`, `pos`, `neg`, `warn`, `faint`, `small`, `mono`) applied to plain HTML elements without CSS modules or styled-components.

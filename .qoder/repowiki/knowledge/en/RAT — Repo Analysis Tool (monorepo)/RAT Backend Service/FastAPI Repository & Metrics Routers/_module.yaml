@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: backend/api_routers
+title: FastAPI Repository & Metrics Routers
+scope:
+    - backend/app/routers/
+    - backend/app/schemas.py
+source_files: []
+depends_on: []
+related_to:
+    - path: backend/tests
+    - path: frontend

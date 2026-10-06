@@ -1,0 +1,1 @@
+`make install` creates the Python venv and installs backend + frontend deps; `make dev` starts uvicorn on :8000 and the Vite dev server on :5173 in one process group; `make run` builds the SPA and serves it from the FastAPI app on a single port; `make verify ARGS='--api http://localhost:8000 --repo cJSON'` runs the end-to-end metric spot-checker.

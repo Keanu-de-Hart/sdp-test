@@ -1,0 +1,2 @@
+- Route handlers live in `app/routers/*.py` and are mounted centrally from `app/main.py` rather than imported ad-hoc.
+- Shared request/response models are defined once in `app/schemas.py` and reused by both routers and tests.

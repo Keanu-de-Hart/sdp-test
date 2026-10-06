@@ -1,0 +1,1 @@
+`npm run dev` starts the Vite dev server; `npm run build` runs `tsc --noEmit` first then `vite build`; `npm run preview` serves the built output locally.

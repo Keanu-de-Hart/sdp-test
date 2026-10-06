@@ -1,0 +1,1 @@
+FastAPI service that ingests Git repositories into SQLite and exposes REST endpoints for authors, commits, metrics, and the SPA frontend.

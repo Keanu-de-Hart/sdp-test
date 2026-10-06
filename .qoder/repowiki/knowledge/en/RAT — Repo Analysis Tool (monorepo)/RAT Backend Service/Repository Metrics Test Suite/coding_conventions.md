@@ -1,0 +1,5 @@
+- Golden metric assertions are declared as exact tuples (added, removed, growth, churn, modifications, commit_count) matching the hand-computed history documented at the top of `conftest.py`.
+- Floating-point metric comparisons use `pytest.approx(...)` rather than exact equality, applied to rates like `modification_frequency` and `churn_rate`.
+- The fixture repo is constructed by scripting a sequence of `git` commands through a local `git()` helper that injects `GIT_AUTHOR_NAME/EMAIL/DATE` and `GIT_COMMITTER_*` env vars per committer identity.
+- Database access inside tests opens a connection via `db.connect()` as a context manager and queries the SQLite schema directly (`commits`, `file_changes`, `repos`) instead of going through ORM helpers.
+- Author identity normalization is asserted via both the `.mailmap` resolution (Alicia -> Alice) and the absence of raw identities like `alice2@w.com` in downstream results.

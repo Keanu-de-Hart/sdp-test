@@ -1,0 +1,2 @@
+- Domain routes are split per entity into `routers/<entity>.py` files and registered centrally in `main.py` rather than defined inline.
+- Pydantic models live in `schemas.py` and are reused across routers instead of being redefined per endpoint.

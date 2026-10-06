@@ -1,0 +1,1 @@
+React entry point and top-level route pages (repositories list, dashboard, authors) that wire routing, providers, and repository-scoped state.

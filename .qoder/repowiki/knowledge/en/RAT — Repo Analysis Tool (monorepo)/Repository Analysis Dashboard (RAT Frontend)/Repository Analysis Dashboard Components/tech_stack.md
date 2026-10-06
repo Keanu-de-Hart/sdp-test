@@ -1,0 +1,1 @@
+React function components with TypeScript; `react-router-dom` for routing; Apache ECharts (`echarts` + `echarts-for-react` via `useECharts` hook) for the growth timeline chart.

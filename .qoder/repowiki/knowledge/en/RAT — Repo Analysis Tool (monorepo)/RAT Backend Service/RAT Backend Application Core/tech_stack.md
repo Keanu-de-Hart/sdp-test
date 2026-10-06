@@ -1,0 +1,1 @@
+FastAPI + Pydantic for request/response modeling; SQLite via SQLAlchemy-style engine from `db.py`; background git ingestion driven by `gitpython`-style operations in `ingest.py`.

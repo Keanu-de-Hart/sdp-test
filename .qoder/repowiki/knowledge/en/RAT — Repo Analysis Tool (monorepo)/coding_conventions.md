@@ -1,0 +1,2 @@
+- Development and build orchestration is centralized in the root `Makefile`; child modules do not define their own top-level entry points.
+- Backend tests use pytest against an in-process fixture that builds a deterministic Git history and asserts golden metric values.

@@ -1,0 +1,1 @@
+`pytest` runs the full test suite (configured in `pytest.ini`); there is no separate build step since the app is a plain Python package started directly.

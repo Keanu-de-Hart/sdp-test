@@ -1,0 +1,1 @@
+The frontend must be built before serving static assets — `main.py` returns a JSON 404 hinting to run `make build` or use the Vite dev server. Runtime paths are controlled by `RAT_DATA_DIR` and `RAT_FRONTEND_DIST` environment variables.

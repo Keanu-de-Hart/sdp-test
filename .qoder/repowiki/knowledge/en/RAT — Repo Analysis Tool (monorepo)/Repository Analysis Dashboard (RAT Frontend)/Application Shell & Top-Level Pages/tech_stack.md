@@ -1,0 +1,1 @@
+React 18 with `react-router-dom` v6 (`BrowserRouter`, `Routes`, `useParams`, `useNavigate`) and `react-dom/client`'s `createRoot` for mounting.

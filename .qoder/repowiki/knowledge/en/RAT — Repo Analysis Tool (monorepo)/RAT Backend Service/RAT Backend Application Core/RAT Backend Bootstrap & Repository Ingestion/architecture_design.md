@@ -1,0 +1,8 @@
+Five cohesive files form the backend's root package:
+- `main.py` is the FastAPI entry point: registers CORS middleware, calls `init_db()`, mounts the four sub-routers (`repos`, `metrics`, `authors`, `commits`), serves `/assets` statically, and implements a SPA fallback route for the Vite-built frontend.
+- `config.py` centralises filesystem layout via `Path` constants (`BASE_DIR`, `DATA_DIR`, `REPOS_DIR`, `DB_PATH`, `FRONTEND_DIST`) overridable through `RAT_DATA_DIR` / `RAT_FRONTEND_DIST` environment variables; directories are auto-created on import.
+- `db.py` owns the SQLite layer: an in-file `SCHEMA` string defines `repos`, `commits`, `file_changes`, `merged_authors`, `author_merges` (all keyed by `repo_id` for multi-repo support), plus `connect()` (WAL + foreign keys) and `init_db()`.
+- `ingest.py` is the heavy-lifting module: it shells out to `git` (clone --mirror, log --no-merges -M50% --numstat -z) and parses the NUL-delimited stream incrementally via `_nul_tokens`/`parse_log_stream`, batching inserts into SQLite. Background work runs in daemon threads via `start_ingest_thread`, with progress/error surfaced through a `set_status` callback and cancellation via `should_abort`. Zip uploads go through `safe_extract_zip` with zip-slip checks.
+- `schemas.py` holds Pydantic models (`CloneRequest`, `MetricsFilters`, `MergeRequest`) consumed by the routers.
+
+Dependency direction is strictly inward: routers → ingest/db/config/schemas; ingest → db/config; main → config/db/routers. The only cross-import from ingest back into the app is a late import of `.metrics.cache_invalidate` inside `run_ingest` to break the router↔ingest cycle.

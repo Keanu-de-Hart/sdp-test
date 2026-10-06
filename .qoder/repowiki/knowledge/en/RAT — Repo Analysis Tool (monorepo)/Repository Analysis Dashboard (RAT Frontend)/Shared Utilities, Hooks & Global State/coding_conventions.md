@@ -1,0 +1,5 @@
+- Pure utility functions accept `null | undefined` inputs and return a sentinel dash string (`"–"`) or `null` rather than throwing, as seen across all `fmt*` formatters and time helpers.
+- Data-fetching hooks follow a uniform `{ data, loading, error }` shape and use an `alive` flag inside `useEffect` to guard against stale async results after unmount.
+- URL-synced state is modeled as a pair of `parse(sp)` / `serialize(filters)` functions that round-trip between a typed state object and `URLSearchParams`.
+- Global state is exposed as a React Context created via `createContext<T>(null)` (or a no-op default) paired with a `Provider` component and a `useXxx()` hook that throws when used outside the provider.
+- Chart theming is centralized in a single `C` constant plus shared `axisBase` / `tooltipBase` objects so every chart reuses the same palette, grid, and tooltip styling.

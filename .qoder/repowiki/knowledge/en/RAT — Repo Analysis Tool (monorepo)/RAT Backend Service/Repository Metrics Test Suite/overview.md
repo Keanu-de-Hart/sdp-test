@@ -1,0 +1,1 @@
+Pytest suite that builds a deterministic Git fixture repository and validates ingestion, metrics views, API endpoints, and the git-log parser against hand-computed golden values.

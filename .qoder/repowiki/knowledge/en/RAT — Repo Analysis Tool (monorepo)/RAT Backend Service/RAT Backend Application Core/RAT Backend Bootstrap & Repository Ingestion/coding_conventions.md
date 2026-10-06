@@ -1,0 +1,5 @@
+- Repository state transitions are modelled as string status values (`pending|cloning|extracting|indexing|ready|error`) persisted via a shared `set_status` helper rather than ad-hoc UPDATEs.
+- Long-running git operations stream their output line-by-line or token-by-token instead of loading full dumps into memory, with progress callbacks reporting fractions of a precomputed commit count.
+- External process invocations are wrapped in a `git()` helper that injects a safe env dict (`GIT_TERMINAL_PROMPT=0`, `LC_ALL=C`, `GIT_CONFIG_NOSYSTEM=1`) and raises `IngestError` on non-zero exit codes.
+- Configuration is exposed as module-level `pathlib.Path` constants derived from environment variables with sensible defaults under `BASE_DIR`, created eagerly on import.
+- Pydantic request models in `schemas.py` use `from __future__ import annotations` and default-typed fields so routers can accept optional query/body parameters without extra validation logic.

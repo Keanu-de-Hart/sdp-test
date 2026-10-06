@@ -1,0 +1,1 @@
+FastAPI + Pydantic v2 for the API surface; Python stdlib `sqlite3` with WAL journal mode as the persistence layer; `subprocess` shelling out to the system `git` binary for cloning and streaming `git log --numstat -z` output.
