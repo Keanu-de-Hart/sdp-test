@@ -35,3 +35,10 @@ export function fmtDateTime(ts: number | null | undefined): string {
 export function truncate(s: string, max = 60): string {
   return s.length > max ? s.slice(0, max - 1) + "…" : s;
 }
+
+/** Path made relative to a directory scope (the part below it). */
+export function relPathName(path: string, scope: string): string {
+  if (!path) return "/";
+  const base = path.slice(scope ? scope.length + 1 : 0);
+  return base || path;
+}

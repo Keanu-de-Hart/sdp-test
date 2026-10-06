@@ -90,9 +90,11 @@ When the status badge turns `ready`, open the dashboard.
   timeseries bucket granularity.
 - **Summary cards** — added, removed, growth, churn, modifications, η, ρ, |H|.
 - **Growth timeline** — added / removed / growth per day/week/month; use the
-  toolbox brush (drag horizontally) to set the time range.
-- **Directory treemap** — size = churn, colour = growth (red↘ … green↗);
-  click a cell to scope every metric to that directory, `↑ Up` to go back.
+  toolbox brush (drag horizontally) to set the time range, and **Clear range**
+  in the card header to drop it again.
+- **Directories** — treemap (size = churn, colour = growth red↘ … green↗) or
+  an indented tree view via the toggle; click a cell or row to scope every
+  metric to that directory, `↑ Up` to go back.
 - **Authors** — ownership donut + modification bars; click an author to filter
   the whole dashboard to them.
 - **Files table** — sortable per-file metrics, CSV export.

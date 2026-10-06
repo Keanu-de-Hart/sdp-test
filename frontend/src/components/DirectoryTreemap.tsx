@@ -1,13 +1,14 @@
 /** Directory treemap: size = churn, colour = growth (red↘ … green↗).
  *  Clicking a cell scopes every metric to that directory. */
 import type { EChartsOption } from "echarts";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { divergingColor, tooltipBase } from "../lib/charts";
-import { fmtInt, fmtSigned } from "../lib/format";
+import { fmtInt, fmtSigned, relPathName } from "../lib/format";
 import { useMetrics } from "../lib/hooks";
 import { useECharts } from "../lib/useECharts";
 import { useFilters } from "../state/FiltersContext";
 import type { DirRow, DirsResponse } from "../types";
+import { DirectoryTree } from "./DirectoryTree";
 import { ChartState } from "./ui";
 
 interface TreeNode {
@@ -22,17 +23,11 @@ interface TreeNode {
   children?: TreeNode[];
 }
 
-function leafName(path: string, scope: string): string {
-  if (!path) return "/";
-  const base = path.slice(scope ? scope.length + 1 : 0);
-  return base || path;
-}
-
 function buildTree(items: DirRow[], scope: string, maxAbsGrowth: number): TreeNode | null {
   const nodes = new Map<string, TreeNode>();
   for (const it of items) {
     nodes.set(it.path, {
-      name: leafName(it.path, scope),
+      name: relPathName(it.path, scope),
       path: it.path,
       value: Math.max(it.churn, 1),
       growth: it.growth,
@@ -62,9 +57,13 @@ function buildTree(items: DirRow[], scope: string, maxAbsGrowth: number): TreeNo
 
 export function DirectoryTreemap() {
   const { repoId, apiFilters, filters, setFilters } = useFilters();
+  const [view, setView] = useState<"treemap" | "tree">("treemap");
   const isFileScope = filters.type === "file" && !!filters.path;
+  const isTreemap = view === "treemap";
   const scope = isFileScope ? "" : filters.path;
   const { data, loading, error } = useMetrics<DirsResponse>(repoId, "dirs", apiFilters, !isFileScope);
+
+  const items = data?.items ?? [];
 
   const scopeNode = useMemo(() => {
     if (!data) return null;
@@ -133,6 +132,22 @@ export function DirectoryTreemap() {
         <span className="card-title">Directories</span>
         <span className="card-sub">size = churn · colour = growth</span>
         <div className="card-actions">
+          <div className="seg" role="group" aria-label="Directory view">
+            <button
+              type="button"
+              className={isTreemap ? "active" : ""}
+              onClick={() => setView("treemap")}
+            >
+              Treemap
+            </button>
+            <button
+              type="button"
+              className={!isTreemap ? "active" : ""}
+              onClick={() => setView("tree")}
+            >
+              Tree
+            </button>
+          </div>
           {filters.path !== "" && (
             <button
               type="button"
@@ -142,22 +157,38 @@ export function DirectoryTreemap() {
               ↑ Up
             </button>
           )}
-          <span className="faint small">click a cell to scope</span>
+          <span className="faint small">
+            {isTreemap ? "click a cell to scope" : "click a row to scope"}
+          </span>
         </div>
       </header>
       <div className="card-body">
         {isFileScope ? (
           <div className="empty">
             A file is selected as the object scope — pick a <b>directory</b> (or the root) to see
-            the treemap.
+            the {isTreemap ? "treemap" : "tree view"}.
           </div>
         ) : (
           <ChartState
             loading={loading}
             error={error}
-            empty={!loading && children.length === 0}
+            empty={!loading && (isTreemap ? children.length === 0 : items.length === 0)}
+            emptyMessage={
+              filters.path
+                ? "This directory has no subdirectories."
+                : "No data for the current selection."
+            }
           >
-            <div ref={elRef} className="chart tall" />
+            {isTreemap ? (
+              <div ref={elRef} className="chart tall" />
+            ) : (
+              <DirectoryTree
+                items={items}
+                scope={scope}
+                currentPath={filters.path}
+                onScope={(p) => setFilters({ path: p, type: "dir" })}
+              />
+            )}
           </ChartState>
         )}
       </div>

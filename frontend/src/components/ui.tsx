@@ -37,15 +37,28 @@ export function ChartState({
   loading,
   error,
   empty,
+  emptyMessage,
   children,
 }: {
   loading: boolean;
   error: string | null;
   empty: boolean;
+  emptyMessage?: string;
   children: ReactNode;
 }) {
-  if (error) return <ErrorNote>{error}</ErrorNote>;
-  if (loading && empty) return <Loading />;
-  if (empty) return <Empty>No data for the current selection.</Empty>;
-  return <>{children}</>;
+  // Children stay mounted underneath the overlay so an ECharts canvas is
+  // never detached (detached charts cannot be re-attached; re-init is costly).
+  const overlay = error ? (
+    <ErrorNote>{error}</ErrorNote>
+  ) : loading && empty ? (
+    <Loading />
+  ) : empty ? (
+    <Empty>{emptyMessage ?? "No data for the current selection."}</Empty>
+  ) : null;
+  return (
+    <div className="chart-state">
+      {children}
+      {overlay !== null && <div className="chart-overlay">{overlay}</div>}
+    </div>
+  );
 }

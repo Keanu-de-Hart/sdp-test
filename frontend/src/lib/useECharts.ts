@@ -15,7 +15,16 @@ export function useECharts(option: EChartsOption, events?: ChartEvents) {
 
   const ensure = useCallback(() => {
     const el = elRef.current;
-    if (!el || chartRef.current) return chartRef.current;
+    if (!el) return null;
+    if (chartRef.current && chartRef.current.getDom() !== el) {
+      // The container was re-mounted (a state swap replaced the chart div):
+      // dispose the stale instance bound to the detached node and re-init.
+      roRef.current?.disconnect();
+      roRef.current = null;
+      chartRef.current.dispose();
+      chartRef.current = null;
+    }
+    if (chartRef.current) return chartRef.current;
     const chart = echarts.init(el);
     for (const name of Object.keys(eventsRef.current ?? {})) {
       chart.on(name, (p: unknown) => eventsRef.current?.[name]?.(p));

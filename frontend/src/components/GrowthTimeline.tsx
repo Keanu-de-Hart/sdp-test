@@ -60,8 +60,8 @@ export function GrowthTimeline() {
         iconStyle: { borderColor: C.text },
         feature: {
           brush: {
-            type: ["lineX", "clear"],
-            title: { lineX: "Drag horizontally to set the time range", clear: "Clear range" },
+            type: ["lineX"],
+            title: { lineX: "Drag horizontally to set the time range" },
           },
         },
       },
@@ -136,6 +136,12 @@ export function GrowthTimeline() {
 
   const hasRange = !!(filters.start || filters.end) && mode === "range";
 
+  /** Drop the H_i,j range filter and any painted brush area in one go. */
+  const clearRange = () => {
+    setFilters({ start: "", end: "" });
+    chartRef.current?.dispatchAction({ type: "brush", areas: [] });
+  };
+
   return (
     <section className="card">
       <header className="card-header">
@@ -148,7 +154,8 @@ export function GrowthTimeline() {
             <button
               type="button"
               className="btn ghost sm"
-              onClick={() => setFilters({ start: "", end: "" })}
+              onClick={clearRange}
+              title="Clear the H_i,j time range filter"
             >
               Clear range
             </button>
