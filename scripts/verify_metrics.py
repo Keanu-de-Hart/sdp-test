@@ -118,9 +118,10 @@ def local_mode(args: argparse.Namespace) -> tuple[dict, dict]:
 
     db.init_db()
     source = args.repo or args.clone
-    name = args.name or (Path(str(source).rstrip("/")).stem or "repo")
-    if str(source).endswith(".git"):
-        name = name[:-4]
+    name = (args.name or "").strip()
+    if not name:  # same derivation as the clone API
+        tail = str(source).rstrip("/").split("/")[-1]
+        name = tail[:-4] if tail.endswith(".git") else tail
 
     with db.connect() as conn:
         cur = conn.execute(
@@ -196,6 +197,8 @@ def compare_expected(expected_path: str, results: dict) -> bool:
     failures = 0
     print(f"== expected-value checks ({expected_path}) ==")
     for view, spec in expected.items():
+        if view.startswith("_") or not isinstance(spec, dict):
+            continue  # annotation keys (e.g. "_comment")
         result = results.get(view)
         if result is None:
             print(f"  FAIL {view}: unknown view")

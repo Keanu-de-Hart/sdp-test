@@ -1,0 +1,36 @@
+{
+  "_comment": "Real values measured on DaveGamble/cJSON (HEAD 6d9f244, 955 non-merge commits). Use with: scripts/verify_metrics.py --api <url> --repo cJSON --expected scripts/expected_example.json",
+  "summary": {
+    "added": 46377,
+    "removed": 11211,
+    "growth": 35166,
+    "churn": 57588,
+    "modifications": 953,
+    "commit_count": 955,
+    "modification_frequency": 0.9979057591623036,
+    "churn_rate": 60.301570680628274
+  },
+  "files": {
+    "cJSON.c": {
+      "added": 8165,
+      "removed": 4457,
+      "churn": 12622,
+      "modifications": 445
+    }
+  },
+  "dirs": {
+    "tests": {
+      "churn": 6416,
+      "growth": 5078,
+      "modifications": 142
+    }
+  },
+  "authors": {
+    "Max Bruckner": {
+      "commits": 634,
+      "churn": 48192,
+      "modifications": 634,
+      "ownership": 0.8368410085434466
+    }
+  }
+}
